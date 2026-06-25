@@ -9,7 +9,7 @@ function Navbar() {
     >
       <div className="container-fluid">
         <span className="navbar-brand mb-0 h1">
-          🎵 Repertorio CEHCJ
+          🎵 Repertorio de canciones CEHCJ
         </span>
       </div>
     </nav>
