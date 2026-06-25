@@ -7,9 +7,9 @@ function Navbar() {
           "linear-gradient(90deg,#0c055c 0%,#2d6eb3 35%,#f28c28 100%)",
       }}
     >
-      <div className="container-fluid">
-        <span className="navbar-brand mb-0 h1">
-          🎵 Repertorio de canciones CEHCJ
+      <div className="container-fluid justify-content-center">
+        <span className="navbar-brand mb-0 h1 text-center">
+          🎵 Repertorio de canciones CEHCJ 🎵
         </span>
       </div>
     </nav>
