@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {
+  useParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import {
   getSong,
   isFavorite,
@@ -11,6 +15,8 @@ import { transponerAcorde } from "../utils/transpose";
 
 function SongDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [song, setSong] = useState(null);
   const [tono, setTono] = useState("");
@@ -78,7 +84,14 @@ function SongDetail() {
       >
         <button
           className="btn btn-secondary"
-          onClick={() => window.history.back()}
+          onClick={() =>
+            navigate("/", {
+              state: {
+                mostrarFavoritos:
+                  location.state?.mostrarFavoritos ?? false,
+              },
+            })
+          }
         >
           ← Volver
         </button>

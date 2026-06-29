@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
 
-function SongCard({ id, titulo, tono, favorita }) {
+function SongCard({
+  id,
+  titulo,
+  tono,
+  favorita,
+  mostrarFavoritos,
+}) {
   return (
     <div className="card shadow-sm mb-3">
       <div className="card-body d-flex justify-content-between align-items-center">
@@ -27,6 +33,7 @@ function SongCard({ id, titulo, tono, favorita }) {
 
         <Link
           to={`/song/${id}`}
+          state={{ mostrarFavoritos }}
           className="btn btn-outline-primary"
         >
           Ver
