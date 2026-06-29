@@ -84,16 +84,9 @@ function SongDetail() {
       >
         <button
           className="btn btn-secondary"
-          onClick={() =>
-            navigate("/", {
-              state: {
-                mostrarFavoritos:
-                  location.state?.mostrarFavoritos ?? false,
-              },
-            })
-          }
+          onClick={() => navigate(-1)}
         >
-          ← Volver
+         ← Volver
         </button>
 
         <button
