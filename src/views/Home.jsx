@@ -75,7 +75,7 @@ function Home() {
           }
           onClick={() => setMostrarFavoritos(false)}
         >
-          📖 Todas ({canciones.length})
+          🎵 Todas ({canciones.length})
         </button>
 
         <button
@@ -86,7 +86,7 @@ function Home() {
           }
           onClick={() => setMostrarFavoritos(true)}
         >
-          ⭐ Favoritas ({favoritos.length})
+          💛 Favoritas ({favoritos.length})
         </button>
 
       </div>
@@ -110,7 +110,7 @@ function Home() {
                     fontSize: "3rem",
                   }}
                 >
-                  ⭐
+                  💛
                 </div>
 
                 <h5 className="mt-3">
@@ -122,7 +122,7 @@ function Home() {
                 </p>
 
                 <p className="text-muted">
-                  Abre una canción y pulsa la estrella
+                  Abre una canción y pulsa el corazón
                   para agregarla.
                 </p>
 

@@ -19,7 +19,7 @@ function SongCard({ id, titulo, tono, favorita }) {
                   fontSize: "1rem",
                 }}
               >
-                ⭐
+                💛
               </span>
             )}
           </small>
