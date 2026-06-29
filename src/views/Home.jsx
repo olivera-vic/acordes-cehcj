@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SongCard from "../components/SongCard";
 import SearchBar from "../components/SearchBar";
 import { sincronizarCanciones } from "../services/sync";
+import { getSongs } from "../services/database";
 
 function Home() {
   const [canciones, setCanciones] = useState([]);
@@ -12,7 +13,18 @@ function Home() {
   }, []);
 
   async function cargarCanciones() {
-    const data = await sincronizarCanciones();
+    // 1. Mostrar inmediatamente las canciones guardadas
+    let data = await getSongs();
+
+    data.sort((a, b) => a.titulo.localeCompare(b.titulo));
+
+    setCanciones(data);
+
+    // 2. Sincronizar en segundo plano
+    await sincronizarCanciones();
+
+    // 3. Volver a leer la base local por si hubo cambios
+    data = await getSongs();
 
     data.sort((a, b) => a.titulo.localeCompare(b.titulo));
 

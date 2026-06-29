@@ -7,16 +7,13 @@ import {
 } from "./database";
 
 export async function sincronizarCanciones() {
+  // Si no hay internet, no intentar sincronizar
+  if (!navigator.onLine) {
+    return;
+  }
+
   try {
-    // Siempre mostrar primero las canciones locales
-    const cancionesLocales = await getSongs();
-
-    // Si no hay internet
-    if (!navigator.onLine) {
-      return cancionesLocales;
-    }
-
-    // Configuración local
+    // Configuración guardada localmente
     const configLocal =
       (await getConfig()) || {
         id: 1,
@@ -33,15 +30,15 @@ export async function sincronizarCanciones() {
 
     if (errorConfig) throw errorConfig;
 
-    // No hubo cambios
+    // Si no hubo cambios, salir
     if (
       configLocal.ultima_actualizacion ===
       configServidor.ultima_actualizacion
     ) {
-      return cancionesLocales;
+      return;
     }
 
-    let cancionesActualizadas;
+    let cancionesActualizadas = [];
 
     // Primera sincronización
     if (!configLocal.ultima_actualizacion) {
@@ -67,22 +64,19 @@ export async function sincronizarCanciones() {
       cancionesActualizadas = data;
     }
 
-    // Guardar únicamente las modificadas
+    // Guardar únicamente las nuevas o modificadas
     if (cancionesActualizadas.length > 0) {
       await saveSongs(cancionesActualizadas);
     }
 
-    // Actualizar fecha de sincronización
+    // Guardar fecha de última sincronización
     await saveConfig({
       ultima_actualizacion:
         configServidor.ultima_actualizacion,
     });
 
-    // Devolver toda la base local
-    return await getSongs();
+    console.log("✔ Sincronización completada");
   } catch (error) {
-    console.error(error);
-
-    return await getSongs();
+    console.error("Error sincronizando:", error);
   }
 }
