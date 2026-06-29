@@ -2,28 +2,33 @@ import { useEffect, useState } from "react";
 import SongCard from "../components/SongCard";
 import SearchBar from "../components/SearchBar";
 import { sincronizarCanciones } from "../services/sync";
-import { getSongs } from "../services/database";
+import {
+  getSongs,
+  getFavorites,
+} from "../services/database";
 
 function Home() {
   const [canciones, setCanciones] = useState([]);
+  const [favoritos, setFavoritos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
 
   useEffect(() => {
     cargarCanciones();
   }, []);
 
   async function cargarCanciones() {
-    // 1. Mostrar inmediatamente las canciones guardadas
     let data = await getSongs();
 
     data.sort((a, b) => a.titulo.localeCompare(b.titulo));
 
+    const favoritosDB = await getFavorites();
+
+    setFavoritos(favoritosDB);
     setCanciones(data);
 
-    // 2. Sincronizar en segundo plano
     await sincronizarCanciones();
 
-    // 3. Volver a leer la base local por si hubo cambios
     data = await getSongs();
 
     data.sort((a, b) => a.titulo.localeCompare(b.titulo));
@@ -31,9 +36,21 @@ function Home() {
     setCanciones(data);
   }
 
-  const cancionesFiltradas = canciones.filter((cancion) =>
-    cancion.titulo.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const cancionesFiltradas = canciones.filter((cancion) => {
+    const coincideBusqueda = cancion.titulo
+      .toLowerCase()
+      .includes(busqueda.toLowerCase());
+
+    const esFavorita = favoritos.some(
+      (f) => f.id === cancion.id
+    );
+
+    if (mostrarFavoritos) {
+      return coincideBusqueda && esFavorita;
+    }
+
+    return coincideBusqueda;
+  });
 
   return (
     <>
@@ -47,21 +64,90 @@ function Home() {
         Canciones ({canciones.length})
       </h2>
 
+      {/* BOTONES */}
+      <div className="btn-group w-100 mb-3">
+
+        <button
+          className={
+            mostrarFavoritos
+              ? "btn btn-outline-primary"
+              : "btn btn-primary"
+          }
+          onClick={() => setMostrarFavoritos(false)}
+        >
+          📖 Todas ({canciones.length})
+        </button>
+
+        <button
+          className={
+            mostrarFavoritos
+              ? "btn btn-primary"
+              : "btn btn-outline-primary"
+          }
+          onClick={() => setMostrarFavoritos(true)}
+        >
+          ⭐ Favoritas ({favoritos.length})
+        </button>
+
+      </div>
+
       <SearchBar
         busqueda={busqueda}
         setBusqueda={setBusqueda}
       />
 
       <div className="mt-4">
+
+        {mostrarFavoritos &&
+          favoritos.length === 0 && (
+
+            <div className="card shadow-sm">
+
+              <div className="card-body text-center py-5">
+
+                <div
+                  style={{
+                    fontSize: "3rem",
+                  }}
+                >
+                  ⭐
+                </div>
+
+                <h5 className="mt-3">
+                  Sin favoritos
+                </h5>
+
+                <p className="text-muted mb-0">
+                  Aún no tienes canciones favoritas.
+                </p>
+
+                <p className="text-muted">
+                  Abre una canción y pulsa la estrella
+                  para agregarla.
+                </p>
+
+              </div>
+
+            </div>
+
+        )}
+
         {cancionesFiltradas.map((cancion) => (
+
           <SongCard
             key={cancion.id}
             id={cancion.id}
             titulo={cancion.titulo}
             tono={cancion.tono}
+            favorita={favoritos.some(
+              (f) => f.id === cancion.id
+            )}
           />
+
         ))}
+
       </div>
+
     </>
   );
 }

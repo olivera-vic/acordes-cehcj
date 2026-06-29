@@ -12,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.108.2",
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "idb": "^8.0.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
