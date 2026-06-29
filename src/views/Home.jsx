@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import SongCard from "../components/SongCard";
 import SearchBar from "../components/SearchBar";
 import { sincronizarCanciones } from "../services/sync";
@@ -9,30 +8,17 @@ import {
 } from "../services/database";
 
 function Home() {
-  const location = useLocation();
-
   const [canciones, setCanciones] = useState([]);
   const [favoritos, setFavoritos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
+
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(
+    () => sessionStorage.getItem("tab") === "favoritos"
+  );
 
   useEffect(() => {
     cargarCanciones();
   }, []);
-
-  // Cuando regresamos desde SongDetail
-  useEffect(() => {
-    if (location.state?.mostrarFavoritos !== undefined) {
-      setMostrarFavoritos(location.state.mostrarFavoritos);
-    }
-
-    cargarFavoritos();
-  }, [location]);
-
-  async function cargarFavoritos() {
-    const favoritosDB = await getFavorites();
-    setFavoritos(favoritosDB);
-  }
 
   async function cargarCanciones() {
     let data = await getSongs();
@@ -50,6 +36,9 @@ function Home() {
 
     data.sort((a, b) => a.titulo.localeCompare(b.titulo));
 
+    const nuevosFavoritos = await getFavorites();
+
+    setFavoritos(nuevosFavoritos);
     setCanciones(data);
   }
 
@@ -81,14 +70,19 @@ function Home() {
         Canciones ({canciones.length})
       </h2>
 
+      {/* BOTONES */}
       <div className="btn-group w-100 mb-3">
+
         <button
           className={
             mostrarFavoritos
               ? "btn btn-outline-primary"
               : "btn btn-primary"
           }
-          onClick={() => setMostrarFavoritos(false)}
+          onClick={() => {
+            setMostrarFavoritos(false);
+            sessionStorage.setItem("tab", "todas");
+          }}
         >
           🎵 Todas ({canciones.length})
         </button>
@@ -99,10 +93,14 @@ function Home() {
               ? "btn btn-primary"
               : "btn btn-outline-primary"
           }
-          onClick={() => setMostrarFavoritos(true)}
+          onClick={() => {
+            setMostrarFavoritos(true);
+            sessionStorage.setItem("tab", "favoritos");
+          }}
         >
           💛 Favoritas ({favoritos.length})
         </button>
+
       </div>
 
       <SearchBar
@@ -112,32 +110,42 @@ function Home() {
 
       <div className="mt-4">
 
-        {mostrarFavoritos && favoritos.length === 0 && (
-          <div className="card shadow-sm">
-            <div className="card-body text-center py-5">
+        {mostrarFavoritos &&
+          favoritos.length === 0 && (
 
-              <div style={{ fontSize: "3rem" }}>
-                💛
+            <div className="card shadow-sm">
+
+              <div className="card-body text-center py-5">
+
+                <div
+                  style={{
+                    fontSize: "3rem",
+                  }}
+                >
+                  💛
+                </div>
+
+                <h5 className="mt-3">
+                  Sin favoritos
+                </h5>
+
+                <p className="text-muted mb-0">
+                  Aún no tienes canciones favoritas.
+                </p>
+
+                <p className="text-muted">
+                  Abre una canción y pulsa el corazón
+                  para agregarla.
+                </p>
+
               </div>
 
-              <h5 className="mt-3">
-                Sin favoritos
-              </h5>
-
-              <p className="text-muted mb-0">
-                Aún no tienes canciones favoritas.
-              </p>
-
-              <p className="text-muted">
-                Abre una canción y pulsa el corazón
-                para agregarla.
-              </p>
-
             </div>
-          </div>
+
         )}
 
         {cancionesFiltradas.map((cancion) => (
+
           <SongCard
             key={cancion.id}
             id={cancion.id}
@@ -148,9 +156,11 @@ function Home() {
             )}
             mostrarFavoritos={mostrarFavoritos}
           />
+
         ))}
 
       </div>
+
     </>
   );
 }
