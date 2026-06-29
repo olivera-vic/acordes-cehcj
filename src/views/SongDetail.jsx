@@ -88,7 +88,7 @@ function SongDetail() {
           onClick={toggleFavorita}
           className="btn border-0 bg-transparent p-0"
           style={{
-            fontSize: "2.5rem",
+            fontSize: "2.3rem",
             lineHeight: 1,
             background: "transparent",
             border: "none",
