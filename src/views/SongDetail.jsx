@@ -109,7 +109,7 @@ function SongDetail() {
               : "Agregar a favoritos"
           }
         >
-          {favorita ? "🌟" : "✰"}
+          {favorita ? "🌟" : "✩"}
         </button>
       </div>
 
