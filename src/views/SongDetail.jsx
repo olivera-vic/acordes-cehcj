@@ -16,6 +16,7 @@ function SongDetail() {
   const [tono, setTono] = useState("");
   const [transposicion, setTransposicion] = useState(0);
   const [favorita, setFavorita] = useState(false);
+  const [animando, setAnimando] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,6 +40,12 @@ function SongDetail() {
   }
 
   async function toggleFavorita() {
+    setAnimando(true);
+
+    setTimeout(() => {
+      setAnimando(false);
+    }, 180);
+
     if (favorita) {
       await removeFavorite(id);
       setFavorita(false);
@@ -50,7 +57,6 @@ function SongDetail() {
 
   function cambiarTono(pasos) {
     setTransposicion((actual) => actual + pasos);
-
     setTono((actual) => transponerAcorde(actual, pasos));
   }
 
@@ -82,15 +88,28 @@ function SongDetail() {
           onClick={toggleFavorita}
           className="btn border-0 bg-transparent p-0"
           style={{
-            fontSize: "2.2rem",
+            fontSize: "2.5rem",
             lineHeight: 1,
-            color: favorita ? "#f4b400" : "#b8b8b8",
+            background: "transparent",
+            border: "none",
             cursor: "pointer",
+            userSelect: "none",
+            transition:
+              "transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s",
+            transform: animando
+              ? "scale(1.35) rotate(-12deg)"
+              : "scale(1)",
+            filter: favorita
+              ? "drop-shadow(0 2px 6px rgba(255,193,7,.45))"
+              : "none",
           }}
+          title={
+            favorita
+              ? "Quitar de favoritos"
+              : "Agregar a favoritos"
+          }
         >
-          <i
-            className={favorita ? "bi bi-star-fill" : "bi bi-star"}
-          ></i>
+          {favorita ? "⭐" : "☆"}
         </button>
       </div>
 
