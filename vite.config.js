@@ -18,7 +18,7 @@ export default defineConfig({
 
       manifest: {
         name: "Acordes CEHCJ",
-        short_name: "Acordes",
+        short_name: "Acordes CEHCJ",
         description: "Letras y acordes de canciones CEHCJ",
 
         theme_color: "#0c055c",
