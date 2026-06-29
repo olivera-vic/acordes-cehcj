@@ -75,7 +75,7 @@ function Home() {
           }
           onClick={() => setMostrarFavoritos(false)}
         >
-          ♫ Todas ({canciones.length})
+          ✅ Todas ({canciones.length})
         </button>
 
         <button
